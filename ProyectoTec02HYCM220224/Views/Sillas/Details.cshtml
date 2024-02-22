@@ -29,8 +29,14 @@
             @Html.DisplayFor(model => model.Marca)
         </dd>
         <dt class = "col-sm-2">
+
             @Html.DisplayNameFor(model => model.Imagen)
+          
         </dt>
+
+           
+            
+        
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Imagen)
         </dd>
@@ -46,3 +52,18 @@
     <a asp-action="Edit" asp-route-id="@Model?.IdSilla">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script>
+    function mostrarVistaPrevia() {
+        var input = document.getElementById('fileImagen');
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                document.getElementById('imagenPrevia').src = e.target.result;
+            }
+
+            reader.readAsDataURL(input.files[0]); // Convierte el archivo a una URL base64
+        }
+    }
+</script>

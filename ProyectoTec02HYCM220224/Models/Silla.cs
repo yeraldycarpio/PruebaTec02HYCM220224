@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace ProyectoTec02HYCM220224.Models
 {
@@ -12,6 +13,7 @@ namespace ProyectoTec02HYCM220224.Models
         public byte[]? Imagen { get; set; }
         public int? IdMaterial { get; set; }
 
+        [DisplayName("Material")]
         public virtual Material? IdMaterialNavigation { get; set; }
     }
 }

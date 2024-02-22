@@ -21,8 +21,10 @@ namespace ProyectoTec02HYCM220224.Controllers
         // GET: Sillas
         public async Task<IActionResult> Index()
         {
-            var sILLAS2Context = _context.Sillas.Include(s => s.IdMaterialNavigation);
-            return View(await sILLAS2Context.ToListAsync());
+            var sillas = await _context.Sillas.Include(s => s.IdMaterialNavigation).ToListAsync();
+            return View(sillas);
+            //var sILLAS2Context = _context.Sillas.Include(s => s.IdMaterialNavigation);
+            //return View(await sILLAS2Context.ToListAsync());
         }
 
         // GET: Sillas/Details/5
@@ -47,7 +49,7 @@ namespace ProyectoTec02HYCM220224.Controllers
         // GET: Sillas/Create
         public IActionResult Create()
         {
-            ViewData["IdMaterial"] = new SelectList(_context.Materials, "IdMaterial", "IdMaterial");
+            ViewData["IdMaterial"] = new SelectList(_context.Materials, "IdMaterial", "Nombre");
             return View();
         }
 
@@ -56,16 +58,30 @@ namespace ProyectoTec02HYCM220224.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdSilla,Nombre,Modelo,Marca,Imagen,IdMaterial")] Silla silla)
+        public async Task<IActionResult> Create([Bind("IdSilla,Nombre,Modelo,Marca,Nombre")] Silla silla, IFormFile imagen)
         {
-            if (ModelState.IsValid)
+            if (imagen!=null && imagen.Length > 0)
             {
-                _context.Add(silla);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                using(var memoryStream = new MemoryStream())
+                {   
+                    await imagen.CopyToAsync(memoryStream);
+                    silla.Imagen = memoryStream.ToArray();
+
+                }
             }
-            ViewData["IdMaterial"] = new SelectList(_context.Materials, "IdMaterial", "IdMaterial", silla.IdMaterial);
-            return View(silla);
+
+            _context.Add(silla);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
+            //if (ModelState.IsValid)
+            //{
+            //    _context.Add(silla);
+            //    await _context.SaveChangesAsync();
+            //    return RedirectToAction(nameof(Index));
+            //}
+            //ViewData["IdMaterial"] = new SelectList(_context.Materials, "IdMaterial", "IdMaterial", silla.IdMaterial);
+            //return View(silla);
         }
 
         // GET: Sillas/Edit/5
@@ -81,7 +97,7 @@ namespace ProyectoTec02HYCM220224.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdMaterial"] = new SelectList(_context.Materials, "IdMaterial", "IdMaterial", silla.IdMaterial);
+            ViewData["IdMaterial"] = new SelectList(_context.Materials, "IdMaterial", "Nombre", silla.IdMaterial);
             return View(silla);
         }
 
@@ -90,7 +106,7 @@ namespace ProyectoTec02HYCM220224.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdSilla,Nombre,Modelo,Marca,Imagen,IdMaterial")] Silla silla)
+        public async Task<IActionResult> Edit(int id, [Bind("IdSilla,Nombre,Modelo,Marca,Imagen,Nombre")] Silla silla)
         {
             if (id != silla.IdSilla)
             {
@@ -117,7 +133,7 @@ namespace ProyectoTec02HYCM220224.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdMaterial"] = new SelectList(_context.Materials, "IdMaterial", "IdMaterial", silla.IdMaterial);
+            ViewData["IdMaterial"] = new SelectList(_context.Materials, "IdMaterial", "Nombre", silla.IdMaterial);
             return View(silla);
         }
 
